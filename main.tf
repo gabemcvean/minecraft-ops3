@@ -59,7 +59,7 @@ resource "aws_instance" "minecraft" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
   key_name                    = var.key_name
-  subnet_id                   = tolist(data.aws_subnets.public.ids)[0]
+  subnet_id                   = "subnet-0d6f190e42a4f3cd3"
   vpc_security_group_ids      = [aws_security_group.minecraft.id]
   associate_public_ip_address = true
   iam_instance_profile        = "LabInstanceProfile"
