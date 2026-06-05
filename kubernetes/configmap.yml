@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minecraft-config
+data:
+  EULA: "TRUE"
+  VERSION: "1.21.4"
+  MOTD: "Obsidian Dynamics | Gabe"
+  MEMORY: "1536m"
