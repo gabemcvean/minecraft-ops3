@@ -1,0 +1,17 @@
+grafana:
+  service:
+    type: ClusterIP
+prometheus:
+  service:
+    type: ClusterIP
+  prometheusSpec:
+    retention: 24h
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 5Gi
+alertmanager:
+  service:
+    type: ClusterIP

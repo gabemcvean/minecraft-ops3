@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: minecraft-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: minecraft
+      rules:
+        - alert: MinecraftPodCrashLooping
+          expr: rate(kube_pod_container_status_restarts_total{pod=~"minecraft.*"}[5m]) > 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Minecraft pod is crash looping"
+            description: "The Minecraft pod has restarted recently. Players cannot connect."
+            runbook: "Check kubectl logs, kubectl describe pod, restart deployment if needed"
+
+        - alert: MinecraftHighMemory
+          expr: container_memory_working_set_bytes{pod=~"minecraft.*", container="minecraft"} / (1536 * 1024 * 1024) > 0.85
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Minecraft memory usage above 85%"
+            description: "Minecraft is using more than 85% of its memory limit. OOM kill risk."
+            runbook: "Check for memory leaks, consider increasing limit or restarting pod"
+
+        - alert: MinecraftPodNotReady
+          expr: kube_pod_status_ready{pod=~"minecraft.*", condition="true"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Minecraft pod not ready - players cannot connect"
+            description: "Minecraft pod has been not ready for 2 minutes. Service is unavailable."
+            runbook: "Check kubectl get pods, kubectl describe pod, kubectl logs for errors"
